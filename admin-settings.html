@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — CULINA-SUITE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            height: calc(100vh - var(--nav-height));
+            overflow: hidden;
+        }
+
+        .admin-sidebar {
+            background: var(--color-base-800);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-4);
+        }
+
+        .admin-main {
+            overflow-y: auto;
+            padding: var(--space-5) var(--space-6);
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: 2px;
+            text-decoration: none;
+        }
+
+        .admin-nav-item:hover,
+        .admin-nav-item.active {
+            color: var(--color-primary);
+            background: var(--color-primary-ghost);
+        }
+
+        .admin-nav-section {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--text-micro);
+            padding: var(--space-4) var(--space-4) var(--space-2);
+        }
+
+        .settings-section {
+            background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+
+        .settings-section h3 {
+            font-size: var(--text-base);
+            font-weight: 800;
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: var(--text-xs);
+            font-weight: 700;
+        }
+
+        .setting-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--color-base-600);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.on {
+            background: var(--color-primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.on::after {
+            transform: translateX(20px);
+        }
+
+        .settings-input {
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            border: 1px solid var(--border-subtle);
+            background: var(--surface-glass);
+            color: var(--text-primary);
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .settings-input:focus {
+            border-color: var(--border-primary);
+        }
+
+        .settings-select {
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            border: 1px solid var(--border-subtle);
+            background: var(--surface-glass);
+            color: var(--text-primary);
+            outline: none;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            padding: 10px 28px;
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 800;
+            cursor: pointer;
+            border: 1px solid var(--border-primary);
+            background: var(--color-primary-ghost);
+            color: var(--color-primary);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .save-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-base-900);
+        }
+
+        .outlet-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: var(--surface-glass);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-3);
+        }
+
+        .outlet-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-success);
+            box-shadow: 0 0 8px var(--color-success);
+        }
+
+        @media(max-width:1200px) {
+            .admin-sidebar {
+                display: none;
+            }
+
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:768px) {
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-3);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="cs-nav"></nav>
+    <div class="cs-page" style="display:flex;flex-direction:column;height:100vh;overflow:hidden;">
+        <div
+            style="padding:var(--space-3) var(--space-5);background:var(--color-base-800);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:var(--space-4);">
+            <div style="font-size:var(--text-base);font-weight:800;">Settings</div>
+            <div style="font-size:var(--text-xs);color:var(--text-muted);">Platform Configuration</div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:var(--space-3);">
+                <button class="save-btn" onclick="alert('Settings saved!')">💾 Save Changes</button>
+            </div>
+        </div>
+
+        <div class="admin-layout" style="flex:1;">
+            <div class="admin-sidebar">
+                <div style="margin-bottom:var(--space-4);">
+                    <div style="font-size:var(--text-xs);color:var(--text-muted);">Logged in as</div>
+                    <div style="font-size:var(--text-sm);font-weight:700;">Arun Sharma</div>
+                    <div class="badge badge-info" style="margin-top:4px;">Owner</div>
+                </div>
+                <div class="admin-nav-section">Analytics</div>
+                <a href="admin.html" class="admin-nav-item"><span>📊</span> Overview</a>
+                <a href="admin-revenue.html" class="admin-nav-item"><span>💰</span> Revenue</a>
+                <a href="admin-menu-performance.html" class="admin-nav-item"><span>🍽️</span> Menu Performance</a>
+                <div class="admin-nav-section">Management</div>
+                <a href="admin-menu-editor.html" class="admin-nav-item"><span>📋</span> Menu Editor</a>
+                <a href="admin-settings.html" class="admin-nav-item active"><span>⚙️</span> Settings</a>
+            </div>
+
+            <div class="admin-main">
+                <!-- GENERAL SETTINGS -->
+                <div class="settings-section">
+                    <h3>🏢 Restaurant Profile</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Restaurant Name</div>
+                            <div class="setting-desc">Displayed across all customer-facing pages</div>
+                        </div>
+                        <input type="text" class="settings-input" value="The Grand Brasserie" style="width:240px;">
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Tagline</div>
+                            <div class="setting-desc">Appears below the restaurant name</div>
+                        </div>
+                        <input type="text" class="settings-input" value="Where Flavors Meet Elegance"
+                            style="width:240px;">
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Currency</div>
+                            <div class="setting-desc">Default currency for all pricing</div>
+                        </div>
+                        <select class="settings-select">
+                            <option selected>₹ INR (Indian Rupee)</option>
+                            <option>$ USD (US Dollar)</option>
+                            <option>€ EUR (Euro)</option>
+                            <option>£ GBP (British Pound)</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Timezone</div>
+                            <div class="setting-desc">Used for analytics and order timestamps</div>
+                        </div>
+                        <select class="settings-select">
+                            <option selected>Asia/Kolkata (IST +5:30)</option>
+                            <option>America/New_York (EST -5:00)</option>
+                            <option>Europe/London (GMT +0:00)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- OPERATIONS -->
+                <div class="settings-section">
+                    <h3>⚡ Operations</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Auto-accept Orders</div>
+                            <div class="setting-desc">Automatically accept incoming orders without manual confirmation
+                            </div>
+                        </div>
+                        <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">KDS Auto-routing</div>
+                            <div class="setting-desc">Route orders to the correct kitchen station automatically</div>
+                        </div>
+                        <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Rush Alert Threshold</div>
+                            <div class="setting-desc">Trigger rush alerts when prep time exceeds this value</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:var(--space-2);">
+                            <input type="number" class="settings-input" value="15"
+                                style="width:60px;text-align:center;">
+                            <span style="font-size:var(--text-xs);color:var(--text-muted);">minutes</span>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Service Charge</div>
+                            <div class="setting-desc">Auto-applied service charge percentage</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:var(--space-2);">
+                            <input type="number" class="settings-input" value="5" style="width:60px;text-align:center;">
+                            <span style="font-size:var(--text-xs);color:var(--text-muted);">%</span>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Default Prep Time</div>
+                            <div class="setting-desc">Estimated preparation time shown to customers</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:var(--space-2);">
+                            <input type="number" class="settings-input" value="20"
+                                style="width:60px;text-align:center;">
+                            <span style="font-size:var(--text-xs);color:var(--text-muted);">minutes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTIFICATIONS -->
+                <div class="settings-section">
+                    <h3>🔔 Notifications</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">New Order Sound</div>
+                            <div class="setting-desc">Play audio alert for new incoming orders</div>
+                        </div>
+                        <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Rush Order Alert</div>
+                            <div class="setting-desc">Visual and audio alert for rush/priority orders</div>
+                        </div>
+                        <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Low Inventory Warnings</div>
+                            <div class="setting-desc">Notify when ingredient stock falls below threshold</div>
+                        </div>
+                        <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Daily Revenue Report</div>
+                            <div class="setting-desc">Send daily revenue summary via email at midnight</div>
+                        </div>
+                        <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                </div>
+
+                <!-- OUTLETS -->
+                <div class="settings-section">
+                    <h3>🏪 Connected Outlets</h3>
+                    <div id="outletList"></div>
+                </div>
+
+                <!-- DANGER ZONE -->
+                <div class="settings-section" style="border-color:rgba(255,80,80,0.2);">
+                    <h3 style="color:#ff5050;">⚠️ Danger Zone</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Reset Analytics</div>
+                            <div class="setting-desc">Clear all analytics data. This cannot be undone.</div>
+                        </div>
+                        <button class="save-btn"
+                            style="border-color:rgba(255,80,80,0.3);color:#ff5050;background:rgba(255,80,80,0.1);"
+                            onclick="alert('This action would require confirmation in production.')">Reset Data</button>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Export All Data</div>
+                            <div class="setting-desc">Download a full data export as CSV/JSON</div>
+                        </div>
+                        <button class="save-btn" onclick="alert('Export started...')">📥 Export</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Outlets
+        const outlets = [
+            { name: 'The Grand Brasserie — Jubilee Hills', status: 'Online', synced: '2s ago' },
+            { name: 'The Grand Brasserie — Banjara Hills', status: 'Online', synced: '5s ago' },
+            { name: 'The Grand Brasserie — Hi-Tech City', status: 'Online', synced: '3s ago' },
+            { name: 'The Grand Brasserie — Gachibowli', status: 'Maintenance', synced: '1m ago' },
+        ];
+
+        document.getElementById('outletList').innerHTML = outlets.map(o => `
+            <div class="outlet-card">
+                <div class="outlet-status" style="${o.status !== 'Online' ? 'background:var(--color-warning);box-shadow:0 0 8px var(--color-warning);' : ''}"></div>
+                <div style="flex:1;">
+                    <div style="font-size:var(--text-xs);font-weight:700;">${o.name}</div>
+                    <div style="font-size:10px;color:var(--text-muted);">Last sync: ${o.synced}</div>
+                </div>
+                <span class="badge badge-${o.status === 'Online' ? 'success' : 'warning'}">${o.status.toUpperCase()}</span>
+            </div>`).join('');
+    </script>
+</body>
+
+</html>

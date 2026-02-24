@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — CULINA-SUITE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: var(--color-base-900);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: var(--space-6);
+            overflow: hidden;
+        }
+
+        .login-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 180, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(123, 97, 255, 0.08) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(26, 30, 46, 0.7);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-6) var(--space-8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 212, 180, 0.05);
+            backdrop-filter: blur(25px);
+            animation: card-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            opacity: 0.8;
+            animation: line-scan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            z-index: 10;
+        }
+
+        @keyframes line-scan {
+            0% {
+                left: -100%;
+            }
+
+            50%,
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes card-reveal {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+                filter: blur(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .login-logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.04em;
+            opacity: 0.6;
+        }
+
+        .login-logo span {
+            color: var(--color-primary);
+        }
+
+        .login-subtitle {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 16px;
+            background: rgba(13, 15, 18, 0.6);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: var(--color-base-700);
+            box-shadow: 0 0 0 4px var(--color-primary-ghost);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(255,255,255,0.3)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 14px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: var(--space-4);
+            font-size: var(--text-base);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: var(--space-8);
+            font-size: var(--text-xs);
+            color: var(--text-micro);
+        }
+
+        /* --- Glow Effects --- */
+        .ambient-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 180, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(60px);
+            animation: pulse-glow 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: rgba(13, 15, 18, 0.8);
+            box-shadow: 0 0 20px var(--color-primary-glow), 0 0 0 4px var(--color-primary-ghost);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:hover {
+            box-shadow: 0 0 30px var(--color-primary-glow), 0 5px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-bg"></div>
+    <div class="ambient-glow"></div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">CULINA<span>-SUITE</span></div>
+            <h1
+                style="font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #fff, #9ca3c8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                Welcome back</h1>
+            <p
+                style="font-size: 13px; color: var(--text-muted); font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                Secure portal for enterprise management</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label" for="name">Full Name</label>
+                <input class="form-input" type="text" id="name" placeholder="Rahul Sharma" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input class="form-input" type="email" id="email" placeholder="rahul@restaurant.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="position">Your Role</label>
+                <select class="form-input form-select" id="position" required>
+                    <option value="" disabled selected>Select your position</option>
+                    <option value="Manager">Owner / Manager</option>
+                    <option value="Cashier">Cashier / Server</option>
+                    <option value="Chef">Chef / Kitchen Staff</option>
+                    <option value="Customer">Customer / Guest</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary login-btn">Secure Login →</button>
+        </form>
+
+        <div style="text-align: center; margin-top: var(--space-4);">
+            <a href="#" id="toggleMode"
+                style="color: var(--color-primary); font-size: 13px; font-weight: 600; text-decoration: none;">New here?
+                Create an account</a>
+        </div>
+
+        <div class="login-footer">
+            Culina Suite v4.2.1 · Enterprise Grade Security
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmsJIlLlKn3tRoOnGS3IT5kwdHxw_EVt0",
+            authDomain: "loggin-2343c.firebaseapp.com",
+            projectId: "loggin-2343c",
+            storageBucket: "loggin-2343c.firebasestorage.app",
+            messagingSenderId: "869630818602",
+            appId: "1:869630818602:web:bc1b568684474e01fec653"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        let isLoginMode = true;
+        const toggleBtn = document.getElementById('toggleMode');
+        const submitBtn = document.getElementById('submitBtn');
+        const loginTitle = document.querySelector('h1');
+        const nameGroup = document.querySelector('.form-group:first-child');
+        const roleGroup = document.querySelector('.form-group:last-of-type');
+
+        // Initial setup: Hide Name and Role for Login
+        nameGroup.style.display = 'none';
+        roleGroup.style.display = 'none';
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+
+            if (isLoginMode) {
+                loginTitle.textContent = 'Welcome back';
+                submitBtn.textContent = 'Secure Login →';
+                toggleBtn.textContent = 'New here? Create an account';
+                nameGroup.style.display = 'none';
+                roleGroup.style.display = 'none';
+            } else {
+                loginTitle.textContent = 'Join Culina';
+                submitBtn.textContent = 'Create Account ++';
+                toggleBtn.textContent = 'Already have an account? Sign In';
+                nameGroup.style.display = 'block';
+                roleGroup.style.display = 'block';
+            }
+        });
+
+        // Auto-redirect if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // If user exists in session storage, they are fully loaded
+                const storedUser = sessionStorage.getItem('cs_user');
+                if (storedUser) {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const position = document.getElementById('position').value;
+
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = isLoginMode ? 'Authenticating...' : 'Creating Account...';
+
+            try {
+                let userCredential;
+                if (isLoginMode) {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                }
+
+                const user = userCredential.user;
+
+                const userData = {
+                    uid: user.uid,
+                    name: isLoginMode ? (user.displayName || email.split('@')[0]) : name,
+                    email: email,
+                    position: isLoginMode ? 'User' : position, // Default or selected
+                    loginTime: new Date().toISOString()
+                };
+
+                sessionStorage.setItem('cs_user', JSON.stringify(userData));
+
+                document.querySelector('.login-card').style.transition = 'all 0.4s ease';
+                document.querySelector('.login-card').style.opacity = '0';
+                document.querySelector('.login-card').style.transform = 'scale(0.98)';
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 400);
+            } catch (error) {
+                console.error("Authentication failed:", error);
+
+                let message = 'An error occurred. Please try again.';
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    message = 'Invalid credentials. Please try again.';
+                } else if (error.code === 'auth/email-already-in-use') {
+                    message = 'This email is already registered.';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'Password should be at least 6 characters.';
+                }
+
+                if (typeof showToast === 'function') {
+                    showToast(message, 'error');
+                } else {
+                    alert(message);
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        });
+    </script>
+</body>
+
+</html>
